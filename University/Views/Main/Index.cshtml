@@ -1,0 +1,26 @@
+﻿@model IEnumerable<University.Models.Course>
+@{
+    ViewBag.Title = "СПИСОК КУРСОВ";
+   
+}
+
+    <h3> КУРСЫ </h3>
+    <table>
+        <tr>
+            <th> Название курса </th>
+        </tr>
+        @foreach (var course in Model)
+        {
+            <tr>
+               
+                <td>
+                    <a asp-controller="Groups" asp-action="Index" asp-route-id=" @course.Id"> @Html.DisplayFor(modelItem => course.Name) </a>
+                </td>
+        
+                <td> 
+                    <a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id"> Редактировать </a>
+                </td> 
+
+            </tr>
+         }
+    </table>

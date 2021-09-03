@@ -1,0 +1,37 @@
+﻿@model University.Models.Student
+
+@{
+    ViewBag.Title = "Добавить Студента";
+
+}
+<h2>Добавление нового студента</h2>
+
+@using (Html.BeginForm())
+{
+<fieldset>
+
+    <p>
+        Фамилия:  <br/>
+        @Html.EditorFor(model => model.LastName)
+    </p>
+
+    <p>
+        Имя: <br />
+        @Html.EditorFor(model => model.Name)
+    </p>
+
+    <p>
+        Отчество:<br />
+        @Html.EditorFor(model => model.MidName)
+    </p>
+
+    <p>
+        Группа <br />
+        @Html.DropDownListFor(model => model.GroupId, ViewBag.Groups as SelectList)
+    </p>
+
+    <p>
+        <input type="submit" value="Добавить Студента" />
+    </p>
+</fieldset>
+}

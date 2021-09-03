@@ -1,0 +1,29 @@
+﻿@model University.Models.Group
+
+@{
+    ViewBag.Title = "Добавить Группу";
+
+}
+<h2>Добавление новой Группы</h2>
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+       
+
+        <p>
+            Название группы <br />
+            @Html.EditorFor(model => model.Name)
+        </p>
+
+       
+        <p>
+            Курс <br />
+            @Html.DropDownListFor(model => model.CourseId, ViewBag.Courses as SelectList)
+        </p>
+
+        <p>
+            <input type="submit" value="Добавить Группу" />
+        </p>
+    </fieldset>
+}

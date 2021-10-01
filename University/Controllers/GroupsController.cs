@@ -10,11 +10,11 @@ namespace University.Controllers
 {
     public class GroupsController : Controller
     {
-        private readonly UniversityContext _context;
+        private readonly EfServiceItem _item;
 
-        public GroupsController(UniversityContext context)
+        public GroupsController(EfServiceItem item)
         {
-            _context = context;
+            _item = item;
         }
 
         public IActionResult Index(int? id)
@@ -23,8 +23,7 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            return View(item.GetGroupsBy(id).ToList());
+            return View(_item.GetGroupsBy(id).ToList());
         }
 
         public IActionResult Edit(int? id)
@@ -33,15 +32,14 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-           
-           var group = item.GetOneGroupBy(id);
+                      
+           var group = _item.GetOneGroupBy(id);
            
             if (group == null)
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = item.GetListOfCourseForDropDownMenu("Id", "Name", group);
+            ViewData["CourseId"] = _item.GetListOfCourseForDropDownMenu("Id", "Name", group);
           
             return View(group);
         }
@@ -55,8 +53,8 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            EfServiceItem item = new EfServiceItem(_context);
-            bool success  = item.AddOrEditGroup(group);
+          
+            bool success  = _item.AddOrEditGroup(group);
 
             if (success == true)
             { 
@@ -71,8 +69,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            var group = item.GetOneGroupBy(id);
+          
+            var group = _item.GetOneGroupBy(id);
 
             if (group == null)
             {
@@ -86,8 +84,8 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var result = item.RemoveGrourBy(id);
+           
+            var result = _item.RemoveGrourBy(id);
             if (result == false)
             {
               return RedirectToAction("Fail", "Main");

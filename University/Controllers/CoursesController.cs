@@ -6,23 +6,23 @@ namespace University.Controllers
 {
     public class CoursesController : Controller
     {
-        private readonly UniversityContext _context;
+        private readonly EfServiceItem _item;
 
-        public CoursesController(UniversityContext context)
+        public CoursesController(EfServiceItem item)
         {
-            _context = context;
+            _item = item;
         }
 
            
         public IActionResult Edit(int?id)
         {
-            EfServiceItem item = new EfServiceItem(_context);
+            
             
             if (id == null)
             {
                 return NotFound();
             }
-            var course = item.GetOneCourseBy(id);
+            var course = _item.GetOneCourseBy(id);
             if (course == null)
             {
                 return NotFound();
@@ -39,8 +39,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            bool success = item.AddOrEditCourse(course);
+            
+            bool success = _item.AddOrEditCourse(course);
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");
@@ -58,8 +58,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            var course = item.GetOneCourseBy(id);
+            
+            var course = _item.GetOneCourseBy(id);
 
             if (course == null)
             {
@@ -73,8 +73,8 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var success = item.RemoveCourseBy(id);
+          
+            var success = _item.RemoveCourseBy(id);
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");

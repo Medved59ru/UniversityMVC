@@ -6,18 +6,18 @@ namespace University.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly UniversityContext _context;
+        private readonly EfServiceItem _item;
 
-        public StudentsController(UniversityContext context)
+        public StudentsController(EfServiceItem item)
         {
-            _context = context;
+            _item = item;
         }
 
         
         public IActionResult Index(int? id)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            return View(item.GetStudentsByGroup(id));
+           
+            return View(_item.GetStudentsByGroup(id));
         }
 
            
@@ -27,13 +27,12 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            var student = item.GetOneStudentBy(id);
+            var student = _item.GetOneStudentBy(id);
             if (student == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = item.GetListOfGroupsForDropDownMenu("Id", "Name", student);
+            ViewData["GroupId"] = _item.GetListOfGroupsForDropDownMenu("Id", "Name", student);
               
             return View(student);
         }
@@ -47,8 +46,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            bool success = item.AddOrEditStudent(student);
+            
+            bool success = _item.AddOrEditStudent(student);
             if (success==true)
             {
                 return RedirectToAction("Done","Main");
@@ -64,8 +63,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            EfServiceItem item = new EfServiceItem(_context);
-            var student = item.GetOneStudentBy(id);
+            
+            var student = _item.GetOneStudentBy(id);
             if (student == null)
             {
                 return NotFound();
@@ -79,8 +78,8 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var result = item.RemoveStudentBy(id);
+            
+            var result = _item.RemoveStudentBy(id);
             if (result == false)
             {
                 return RedirectToAction("Fail", "Main");

@@ -92,7 +92,10 @@ namespace University.EFServise
 
         }
 
-       protected internal SelectList GetListOfCourseForDropDownMenu(string id, string name, Group group)
+        protected internal SelectList GetGroupsForDropDownMemu(string id = "Id", string name = "Name" ) 
+            => new SelectList(context.Groups, id, name);
+
+        protected internal SelectList GetListOfCourseForDropDownMenu(string id, string name, Group group)
         {
 
             return new SelectList(context.Courses, id, name, group.Course);

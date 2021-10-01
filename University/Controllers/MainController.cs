@@ -11,17 +11,17 @@ namespace University.Controllers
     public class MainController : Controller
     {
 
-        UniversityContext _context;
+       private readonly EfServiceItem _item;
 
-        public MainController(UniversityContext context)
+        public MainController(EfServiceItem item)
         {
-            _context = context;
+            _item = item;
         }
 
         public  IActionResult Index()
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            return View( item.GetListOfCourses());
+           
+            return View( _item.GetListOfCourses());
 
         }
 
@@ -35,8 +35,7 @@ namespace University.Controllers
         [HttpPost]
         public IActionResult AddCourses(Course course)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var success = item.AddOrEditCourse(course);
+            var success = _item.AddOrEditCourse(course);
             if(success == true)
             {
                 return RedirectToAction("Done");
@@ -57,8 +56,8 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddGroups()
         {
-            EfServiceItem items = new EfServiceItem(_context);
-            ViewBag.Courses =  items.GetListOfCourseForDropDownMenu("Id", "Name");
+           
+            ViewBag.Courses =  _item.GetListOfCourseForDropDownMenu("Id", "Name");
             
             return View();
         }
@@ -66,8 +65,8 @@ namespace University.Controllers
         [HttpPost]
         public IActionResult AddGroups(Group group)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var success = item.AddOrEditGroup(group);
+            
+            var success = _item.AddOrEditGroup(group);
             if (success == true)
             {
                 return RedirectToAction("Done");
@@ -78,16 +77,15 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddStudents()
         {
-            SelectList groups = new SelectList(_context.Groups, "Id", "Name");
-            ViewBag.Groups = groups;
+            ViewBag.Groups = _item.GetGroupsForDropDownMemu();
             return View();
         }
 
 
         public IActionResult AddStudents(Student student)
         {
-            EfServiceItem item = new EfServiceItem(_context);
-            var success = item.AddOrEditStudent(student);
+           
+            var success = _item.AddOrEditStudent(student);
             if (success == true)
             {
                 return RedirectToAction("Done");

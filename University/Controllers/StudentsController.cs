@@ -6,38 +6,37 @@ namespace University.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly EfServiceItem _item;
+        private readonly StudentService _student;
+        private readonly GroupService _group;
 
-        public StudentsController(EfServiceItem item)
+        public StudentsController(StudentService student, GroupService group)
         {
-            _item = item;
+            _student = student;
+            _group = group;
         }
 
-        
         public IActionResult Index(int? id)
         {
-           
-            return View(_item.GetStudentsByGroup(id));
+
+            return View(_student.GetStudentsByGroup(id));
         }
 
-           
         public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var student = _item.GetOneStudentBy(id);
+            var student = _student.GetOneStudentBy(id);
             if (student == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = _item.GetListOfGroupsForDropDownMenu("Id", "Name", student);
-              
+            ViewData["GroupId"] = _group.GetListOfGroupsForDropDownMenu("Id", "Name", student);
+
             return View(student);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,Name,MidName,LastName,GroupId")] Student student)
@@ -46,25 +45,24 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            
-            bool success = _item.AddOrEditStudent(student);
-            if (success==true)
+
+            bool success = _student.EditStudent(student);
+            if (success == true)
             {
-                return RedirectToAction("Done","Main");
+                return RedirectToAction("Done", "Main");
             }
             return RedirectToAction("Fail", "Main");
-            
+
         }
 
-        
         public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            
-            var student = _item.GetOneStudentBy(id);
+
+            var student = _student.GetOneStudentBy(id);
             if (student == null)
             {
                 return NotFound();
@@ -73,13 +71,12 @@ namespace University.Controllers
             return View(student);
         }
 
-       
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            
-            var result = _item.RemoveStudentBy(id);
+
+            var result = _student.RemoveStudentBy(id);
             if (result == false)
             {
                 return RedirectToAction("Fail", "Main");
@@ -88,6 +85,5 @@ namespace University.Controllers
             return RedirectToAction("Done", "Main");
         }
 
-       
     }
 }

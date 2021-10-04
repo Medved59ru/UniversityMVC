@@ -11,62 +11,58 @@ namespace University.Controllers
     public class MainController : Controller
     {
 
-       private readonly EfServiceItem _item;
+        private readonly CourseService _course;
+        private readonly GroupService _groupe;
+        private readonly StudentService _student;
 
-        public MainController(EfServiceItem item)
+        public MainController(CourseService course, GroupService group, StudentService student)
         {
-            _item = item;
+            _course = course;
+            _groupe = group;
+            _student = student;
         }
 
-        public  IActionResult Index()
+        public IActionResult Index()
         {
-           
-            return View( _item.GetListOfCourses());
-
+            return View(_course.GetListOfCourses());
         }
 
         [HttpGet]
         public IActionResult AddCourses()
         {
-
             return View();
         }
 
         [HttpPost]
         public IActionResult AddCourses(Course course)
         {
-            var success = _item.AddOrEditCourse(course);
-            if(success == true)
+            var success = _course.AddCourse(course);
+            if (success == true)
             {
                 return RedirectToAction("Done");
             }
             return RedirectToAction("Fail");
         }
 
-        
-
         public ActionResult Done()
         {
             return View();
         }
 
-
-
-
         [HttpGet]
         public IActionResult AddGroups()
         {
-           
-            ViewBag.Courses =  _item.GetListOfCourseForDropDownMenu("Id", "Name");
-            
+
+            ViewBag.Courses = _course.GetListOfCourseForDropDownMenu("Id", "Name");
+
             return View();
         }
 
         [HttpPost]
         public IActionResult AddGroups(Group group)
         {
-            
-            var success = _item.AddOrEditGroup(group);
+
+            var success = _groupe.AddGroup(group);
             if (success == true)
             {
                 return RedirectToAction("Done");
@@ -77,15 +73,14 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddStudents()
         {
-            ViewBag.Groups = _item.GetGroupsForDropDownMemu();
+            ViewBag.Groups = _groupe.GetGroupsForDropDownMemu();
             return View();
         }
 
-
         public IActionResult AddStudents(Student student)
         {
-           
-            var success = _item.AddOrEditStudent(student);
+
+            var success = _student.AddStudent(student);
             if (success == true)
             {
                 return RedirectToAction("Done");
@@ -94,12 +89,10 @@ namespace University.Controllers
 
         }
 
-       
         public IActionResult Fail()
         {
             return View();
         }
-
 
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using University.Models;
-using System.Threading.Tasks;
 
 namespace University
 {
@@ -44,7 +41,6 @@ namespace University
                 context.SaveChanges();
             }
 
-
             if (!context.Students.Any())
             {
                 context.Students.AddRange(
@@ -73,8 +69,6 @@ namespace University
                 context.SaveChanges();
             }
 
-           
-          
         }
     }
 }

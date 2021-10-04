@@ -10,11 +10,13 @@ namespace University.Controllers
 {
     public class GroupsController : Controller
     {
-        private readonly EfServiceItem _item;
+        private readonly GroupService _group;
+        private readonly CourseService _course;
 
-        public GroupsController(EfServiceItem item)
+        public GroupsController(GroupService group, CourseService course)
         {
-            _item = item;
+            _group = group;
+            _course = course;
         }
 
         public IActionResult Index(int? id)
@@ -23,7 +25,7 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            return View(_item.GetGroupsBy(id).ToList());
+            return View(_group.GetGroupsBy(id).ToList());
         }
 
         public IActionResult Edit(int? id)
@@ -32,32 +34,31 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-                      
-           var group = _item.GetOneGroupBy(id);
-           
+
+            var group = _group.GetOneGroupBy(id);
+
             if (group == null)
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = _item.GetListOfCourseForDropDownMenu("Id", "Name", group);
-          
+            ViewData["CourseId"] = _course.GetListOfCourseForDropDownMenu("Id", "Name", group);
+
             return View(group);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  IActionResult Edit(int id, [Bind("Id,Name,CourseId")] Group group)
+        public IActionResult Edit(int id, [Bind("Id,Name,CourseId")] Group group)
         {
             if (id != group.Id)
             {
                 return NotFound();
             }
 
-          
-            bool success  = _item.AddOrEditGroup(group);
+            bool success = _group.EditGroup(group);
 
             if (success == true)
-            { 
+            {
                 return RedirectToAction("Done", "Main");
             }
             return RedirectToAction("Fail", "Main");
@@ -69,8 +70,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-          
-            var group = _item.GetOneGroupBy(id);
+
+            var group = _group.GetOneGroupBy(id);
 
             if (group == null)
             {
@@ -84,13 +85,13 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-           
-            var result = _item.RemoveGrourBy(id);
+
+            var result = _group.RemoveGrourBy(id);
             if (result == false)
             {
-              return RedirectToAction("Fail", "Main");
+                return RedirectToAction("Fail", "Main");
             }
-           
+
             return RedirectToAction("Done", "Main");
         }
 

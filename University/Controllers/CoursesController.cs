@@ -6,18 +6,16 @@ namespace University.Controllers
 {
     public class CoursesController : Controller
     {
-        private readonly EfServiceItem _item;
+        private readonly CourseService _item;
 
-        public CoursesController(EfServiceItem item)
+        public CoursesController(CourseService item)
         {
             _item = item;
         }
 
-           
         public IActionResult Edit(int?id)
         {
-            
-            
+             
             if (id == null)
             {
                 return NotFound();
@@ -40,7 +38,7 @@ namespace University.Controllers
                 return NotFound();
             }
             
-            bool success = _item.AddOrEditCourse(course);
+            bool success = _item.EditCourse(course);
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using University.Models;
 using University.EFServise;
+using AutoMapper;
+using System.Collections.Generic;
+using University.ViewModels;
 
 namespace University.Controllers
 {
@@ -12,11 +15,13 @@ namespace University.Controllers
     {
         private readonly GroupService _group;
         private readonly CourseService _course;
+        private readonly IMapper _mapper;
 
-        public GroupsController(GroupService group, CourseService course)
+        public GroupsController(GroupService group, CourseService course, IMapper mapper)
         {
             _group = group;
             _course = course;
+            _mapper = mapper;
         }
 
         public IActionResult Index(int? id)
@@ -25,7 +30,10 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            return View(_group.GetGroupsBy(id).ToList());
+            var list = _group.GetGroupsBy(id).ToList();
+            var view = _mapper.Map<List<Group>, List<GroupDTO>>(list);
+
+            return View(view);
         }
 
         public IActionResult Edit(int? id)
@@ -43,17 +51,21 @@ namespace University.Controllers
             }
             ViewData["CourseId"] = _course.GetListOfCourseForDropDownMenu("Id", "Name", group);
 
-            return View(group);
+            var view = _mapper.Map<GroupDTO>(group);
+
+            return View(view);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,CourseId")] Group group)
+        public IActionResult Edit(int id, [Bind("Id,Name,CourseId")] GroupDTO groupDTO)
         {
-            if (id != group.Id)
+            if (id != groupDTO.Id)
             {
                 return NotFound();
             }
+
+            var group = _mapper.Map<Group>(groupDTO);
 
             bool success = _group.EditGroup(group);
 
@@ -78,7 +90,9 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            return View(group);
+            var view = _mapper.Map<GroupDTO>(group);
+
+            return View(view);
         }
 
         [HttpPost, ActionName("Delete")]

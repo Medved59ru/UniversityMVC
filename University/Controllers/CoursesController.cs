@@ -1,16 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using University.EFServise;
 using University.Models;
+using University.ViewModels;
 
 namespace University.Controllers
 {
     public class CoursesController : Controller
     {
         private readonly CourseService _item;
+        private readonly IMapper _mapper;
 
-        public CoursesController(CourseService item)
+        public CoursesController(CourseService item, IMapper mapper)
         {
             _item = item;
+            _mapper = mapper;
         }
 
         public IActionResult Edit(int?id)
@@ -21,23 +25,25 @@ namespace University.Controllers
                 return NotFound();
             }
             var course = _item.GetOneCourseBy(id);
+            var view = _mapper.Map<CourseDTO>(course);
             if (course == null)
             {
                 return NotFound();
             }
-            return View(course);
+            return View(view);
         }
 
      
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name")] Course course)
+        public IActionResult Edit(int id, [Bind("Id,Name")] CourseDTO courseDTO)
         {
-            if (id != course.Id)
+            if (id != courseDTO.Id)
             {
                 return NotFound();
             }
-            
+
+            var course = _mapper.Map<Course>(courseDTO);
             bool success = _item.EditCourse(course);
             if (success == true)
             {
@@ -63,7 +69,8 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            return View(course);
+            var view = _mapper.Map<CourseDTO>(course);
+            return View(view);
         }
 
         
@@ -84,6 +91,5 @@ namespace University.Controllers
                 
         }
 
-       
     }
 }

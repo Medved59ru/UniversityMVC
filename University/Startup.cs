@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using University.Models;
 using Microsoft.EntityFrameworkCore;
 using University.EFServise;
+using University.Profiles;
 
 namespace University
 {
@@ -26,7 +27,7 @@ namespace University
             services.AddTransient<GroupService>();
             services.AddTransient<StudentService>();
             services.AddControllersWithViews();
-
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

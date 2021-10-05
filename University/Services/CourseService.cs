@@ -47,7 +47,7 @@ namespace University.EFServise
             return context.Courses.ToList();
         }
 
-        protected internal SelectList GetListOfCourseForDropDownMenu(string id, string name)
+        protected internal SelectList GetListOfCourseForDropDownMenu(string id = "Id", string name = "Name")
         {
             return new SelectList(context.Courses, id, name);
         }

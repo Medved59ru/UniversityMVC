@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University.Models;
 using University.EFServise;
+using AutoMapper;
+using System.Linq;
+using System.Collections.Generic;
+using University.ViewModels;
 
 namespace University.Controllers
 {
@@ -8,17 +12,21 @@ namespace University.Controllers
     {
         private readonly StudentService _student;
         private readonly GroupService _group;
+        private readonly IMapper _mapper;
 
-        public StudentsController(StudentService student, GroupService group)
+        public StudentsController(StudentService student, GroupService group, IMapper mapper)
         {
             _student = student;
             _group = group;
+            _mapper = mapper;
         }
 
         public IActionResult Index(int? id)
         {
+            var list = _student.GetStudentsByGroup(id).ToList();
+            var view = _mapper.Map<List<Student>, List<StudentDTO>>(list);
 
-            return View(_student.GetStudentsByGroup(id));
+            return View(view);
         }
 
         public IActionResult Edit(int? id)
@@ -33,20 +41,23 @@ namespace University.Controllers
                 return NotFound();
             }
             ViewData["GroupId"] = _group.GetListOfGroupsForDropDownMenu("Id", "Name", student);
+            var view = _mapper.Map<StudentDTO>(student);
 
-            return View(student);
+            return View(view);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,MidName,LastName,GroupId")] Student student)
+        public IActionResult Edit(int id, [Bind("Id,Name,MidName,LastName,GroupId")] StudentDTO studentDTO)
         {
-            if (id != student.Id)
+            if (id != studentDTO.Id)
             {
                 return NotFound();
             }
 
+            var student = _mapper.Map<Student>(studentDTO);
             bool success = _student.EditStudent(student);
+
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");
@@ -68,7 +79,9 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            return View(student);
+            var view = _mapper.Map<StudentDTO>(student);
+
+            return View(view);
         }
 
         [HttpPost, ActionName("Delete")]

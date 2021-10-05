@@ -4,27 +4,31 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using University.Models;
 using University.EFServise;
-
+using AutoMapper;
+using University.ViewModels;
+using System.Collections.Generic;
 
 namespace University.Controllers
 {
     public class MainController : Controller
     {
-
+        private readonly IMapper _mapper;
         private readonly CourseService _course;
-        private readonly GroupService _groupe;
+        private readonly GroupService _group;
         private readonly StudentService _student;
 
-        public MainController(CourseService course, GroupService group, StudentService student)
+        public MainController(CourseService course, GroupService group, StudentService student, IMapper mapper)
         {
+            _mapper = mapper;
             _course = course;
-            _groupe = group;
+            _group = group;
             _student = student;
         }
 
         public IActionResult Index()
         {
-            return View(_course.GetListOfCourses());
+            var courses = _mapper.Map<IEnumerable<Course>, List<CourseDTO>>(_course.GetListOfCourses());
+            return View(courses);
         }
 
         [HttpGet]
@@ -34,8 +38,9 @@ namespace University.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourses(Course course)
+        public IActionResult AddCourses(CourseDTO courseDTO)
         {
+            var course = _mapper.Map<Course>(courseDTO);
             var success = _course.AddCourse(course);
             if (success == true)
             {
@@ -52,8 +57,9 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddGroups()
         {
-
-            ViewBag.Courses = _course.GetListOfCourseForDropDownMenu("Id", "Name");
+            var list = _course.GetListOfCourses();
+                 
+            ViewBag.Courses = _course.GetListOfCourseForDropDownMenu();
 
             return View();
         }
@@ -62,7 +68,7 @@ namespace University.Controllers
         public IActionResult AddGroups(Group group)
         {
 
-            var success = _groupe.AddGroup(group);
+            var success = _group.AddGroup(group);
             if (success == true)
             {
                 return RedirectToAction("Done");
@@ -73,7 +79,7 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddStudents()
         {
-            ViewBag.Groups = _groupe.GetGroupsForDropDownMemu();
+            ViewBag.Groups = _group.GetGroupsForDropDownMemu();
             return View();
         }
 

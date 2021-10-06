@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University.Models;
-using University.EFServise;
+using University.Serviсes;
 using AutoMapper;
 using System.Linq;
 using System.Collections.Generic;

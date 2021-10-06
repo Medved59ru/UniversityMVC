@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using University.Models;
 
-namespace University.EFServise
+namespace University.Serviñes
 {
     public class GroupService
     {

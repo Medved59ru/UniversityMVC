@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using University.Models;
 
-namespace University.EFServise
+namespace University.Serviñes
 {
     public class CourseService
     {
-        private readonly UniversityContext context;
+        private readonly UniversityContext _context;
 
         public CourseService(UniversityContext context)
         {
-            this.context = context;
+           _context = context;
         }
 
         protected internal bool AddCourse(Course course)
@@ -19,11 +19,11 @@ namespace University.EFServise
             bool success = false;
             if (course.Id == default)
             {
-                context.Add(course);
+                _context.Add(course);
                 success = true;
             }
 
-            context.SaveChanges();
+            _context.SaveChanges();
 
             return success;
         }
@@ -33,10 +33,10 @@ namespace University.EFServise
             bool success = false;
             if (course.Id != default)
             {
-                context.Update(course);
+                _context.Update(course);
                 success = true;
             }
-            context.SaveChanges();
+            _context.SaveChanges();
 
             return success;
         }
@@ -44,22 +44,31 @@ namespace University.EFServise
        
         protected internal List<Course> GetListOfCourses()
         {
-            return context.Courses.ToList();
+            return _context.Courses.ToList();
         }
 
         protected internal SelectList GetListOfCourseForDropDownMenu(string id = "Id", string name = "Name")
         {
-            return new SelectList(context.Courses, id, name);
+            return new SelectList(_context.Courses, id, name);
         }
 
         protected internal SelectList GetListOfCourseForDropDownMenu(string id, string name, Group group)
         {
-            return new SelectList(context.Courses, id, name, group.Course);
+            return new SelectList(_context.Courses, id, name, group.Course);
         }
 
         protected internal Course GetOneCourseBy(int? id)
         {
-            return context.Courses.Find(id);
+        
+            if (id == null)
+            {
+               return null;
+            }
+            else
+            {
+                return _context.Courses.Find(id);
+            }
+            
         }
 
         protected internal bool RemoveCourseBy(int id)
@@ -67,9 +76,9 @@ namespace University.EFServise
             bool success = false;
             try
             {
-                var course = context.Courses.Find(id);
-                context.Courses.Remove(course);
-                context.SaveChanges();
+                var course = _context.Courses.Find(id);
+                _context.Courses.Remove(course);
+                _context.SaveChanges();
                 success = true;
             }
             catch

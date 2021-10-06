@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using University.EFServise;
+using University.Serviсes;
 using University.Models;
 using University.ViewModels;
 
@@ -8,12 +8,12 @@ namespace University.Controllers
 {
     public class CoursesController : Controller
     {
-        private readonly CourseService _item;
+        private readonly CourseService _courseService;
         private readonly IMapper _mapper;
 
-        public CoursesController(CourseService item, IMapper mapper)
+        public CoursesController(CourseService courseService, IMapper mapper)
         {
-            _item = item;
+            _courseService = courseService;
             _mapper = mapper;
         }
 
@@ -24,12 +24,13 @@ namespace University.Controllers
             {
                 return NotFound();
             }
-            var course = _item.GetOneCourseBy(id);
-            var view = _mapper.Map<CourseDTO>(course);
+
+            var course = _courseService.GetOneCourseBy(id);
             if (course == null)
             {
                 return NotFound();
             }
+            var view = _mapper.Map<CourseDTO>(course);
             return View(view);
         }
 
@@ -44,7 +45,7 @@ namespace University.Controllers
             }
 
             var course = _mapper.Map<Course>(courseDTO);
-            bool success = _item.EditCourse(course);
+            bool success = _courseService.EditCourse(course);
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");
@@ -58,12 +59,8 @@ namespace University.Controllers
         
         public IActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            
-            var course = _item.GetOneCourseBy(id);
+                        
+            var course = _courseService.GetOneCourseBy(id);
 
             if (course == null)
             {
@@ -79,7 +76,7 @@ namespace University.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
           
-            var success = _item.RemoveCourseBy(id);
+            var success = _courseService.RemoveCourseBy(id);
             if (success == true)
             {
                 return RedirectToAction("Done", "Main");

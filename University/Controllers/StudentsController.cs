@@ -10,20 +10,20 @@ namespace University.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly StudentService _student;
-        private readonly GroupService _group;
+        private readonly StudentService _studentSevice;
+        private readonly GroupService _groupService;
         private readonly IMapper _mapper;
 
         public StudentsController(StudentService student, GroupService group, IMapper mapper)
         {
-            _student = student;
-            _group = group;
+            _studentSevice = student;
+            _groupService = group;
             _mapper = mapper;
         }
 
         public IActionResult Index(int? id)
         {
-            var list = _student.GetStudentsByGroup(id).ToList();
+            var list = _studentSevice.GetStudentsByGroup(id).ToList();
             var view = _mapper.Map<List<Student>, List<StudentDTO>>(list);
 
             return View(view);
@@ -31,16 +31,14 @@ namespace University.Controllers
 
         public IActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var student = _student.GetOneStudentBy(id);
+            var student = _studentSevice.GetOneStudentOrDefaultBy(id);
+
             if (student == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = _group.GetListOfGroupsForDropDownMenu("Id", "Name", student);
+            ViewData["GroupId"] = _groupService.GetListOfGroupsForDropDownMenu(student, "Id", "Name");
+
             var view = _mapper.Map<StudentDTO>(student);
 
             return View(view);
@@ -51,14 +49,11 @@ namespace University.Controllers
         public IActionResult Edit(int id, [Bind("Id,Name,MidName,LastName,GroupId")] StudentDTO studentDTO)
         {
             if (id != studentDTO.Id)
-            {
-                return NotFound();
-            }
+                 return NotFound();
+          
+            bool success = _studentSevice.EditStudent(studentDTO);
 
-            var student = _mapper.Map<Student>(studentDTO);
-            bool success = _student.EditStudent(student);
-
-            if (success == true)
+            if (success)
             {
                 return RedirectToAction("Done", "Main");
             }
@@ -68,17 +63,11 @@ namespace University.Controllers
 
         public IActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var student = _studentSevice.GetOneStudentOrDefaultBy(id);
 
-            var student = _student.GetOneStudentBy(id);
             if (student == null)
-            {
                 return NotFound();
-            }
-
+            
             var view = _mapper.Map<StudentDTO>(student);
 
             return View(view);
@@ -89,12 +78,12 @@ namespace University.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
 
-            var result = _student.RemoveStudentBy(id);
-            if (result == false)
+            var result = _studentSevice.RemoveStudentBy(id);
+
+            if (!result)
             {
                 return RedirectToAction("Fail", "Main");
             }
-
             return RedirectToAction("Done", "Main");
         }
 

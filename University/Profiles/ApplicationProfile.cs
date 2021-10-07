@@ -16,12 +16,7 @@ namespace University.Profiles
             CreateMap<Course, CourseDTO>().ReverseMap();
             CreateMap<Group, GroupDTO>().ReverseMap();
             CreateMap<Student, StudentDTO>().ReverseMap();
-            CreateMap<Course, SelectListItem>().ForMember(
-                dest=>dest.Value, opt =>opt.MapFrom(src=>src.Id.ToString())
-                )
-                .ForMember(
-                dest=>dest.Text, opt => opt.MapFrom(src=>src.Name)
-                );
+           
         }
     }
 }

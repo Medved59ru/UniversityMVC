@@ -14,20 +14,17 @@ namespace University.Controllers
         private readonly CourseService _courseService;
         private readonly IMapper _mapper;
 
-        public GroupsController(GroupService group, CourseService course, IMapper mapper)
+        public GroupsController(GroupService groupService, CourseService courseService, IMapper mapper)
         {
-            _groupService = group;
-            _courseService = course;
+            _groupService = groupService;
+            _courseService = courseService;
             _mapper = mapper;
         }
 
         public IActionResult Index(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var list = _groupService.GetGroupsBy(id).ToList();
+            
+            var list = _groupService.GetGroupsOrDefualtBy(id).ToList();
             var view = _mapper.Map<List<Group>, List<GroupDTO>>(list);
 
             return View(view);
@@ -35,18 +32,14 @@ namespace University.Controllers
 
         public IActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var group = _groupService.GetOneGroupBy(id);
+            var group = _groupService.GetOneGroupOrDefualtBy(id);
 
             if (group == null)
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = _courseService.GetListOfCourseForDropDownMenu("Id", "Name", group);
+
+            ViewData["CourseId"] = _courseService.GetListOfCourseForDropDownMenu(group,"Id", "Name");
 
             var view = _mapper.Map<GroupDTO>(group);
 
@@ -62,9 +55,7 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var group = _mapper.Map<Group>(groupDTO);
-
-            bool success = _groupService.EditGroup(group);
+            bool success = _groupService.EditGroup(groupDTO);
 
             if (success == true)
             {
@@ -75,12 +66,8 @@ namespace University.Controllers
 
         public IActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var group = _groupService.GetOneGroupBy(id);
+           
+            var group = _groupService.GetOneGroupOrDefualtBy(id);
 
             if (group == null)
             {
@@ -98,7 +85,7 @@ namespace University.Controllers
         {
 
             var result = _groupService.RemoveGrourBy(id);
-            if (result == false)
+            if (!result)
             {
                 return RedirectToAction("Fail", "Main");
             }

@@ -17,20 +17,16 @@ namespace University.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Edit(int?id)
+        public IActionResult Edit(int? id)
         {
-             
-            if (id == null)
-            {
-                return NotFound();
-            }
+         
+            var course = _courseService.GetOneCourseOrDefaultBy(id);
 
-            var course = _courseService.GetOneCourseBy(id);
             if (course == null)
-            {
-                return NotFound();
-            }
+               return NotFound();
+         
             var view = _mapper.Map<CourseDTO>(course);
+
             return View(view);
         }
 
@@ -40,33 +36,28 @@ namespace University.Controllers
         public IActionResult Edit(int id, [Bind("Id,Name")] CourseDTO courseDTO)
         {
             if (id != courseDTO.Id)
-            {
-                return NotFound();
-            }
+               return NotFound();
+            
+            bool success = _courseService.EditCourse(courseDTO);
 
-            var course = _mapper.Map<Course>(courseDTO);
-            bool success = _courseService.EditCourse(course);
-            if (success == true)
-            {
-                return RedirectToAction("Done", "Main");
-            }
+            if (success)
+               return RedirectToAction("Done", "Main");
+          
             else
-            {
-                return RedirectToAction("Fail", "Main");
-            }
+               return RedirectToAction("Fail", "Main");
+          
         }
 
         
         public IActionResult Delete(int? id)
         {
-                        
-            var course = _courseService.GetOneCourseBy(id);
+            var course = _courseService.GetOneCourseOrDefaultBy(id);
 
             if (course == null)
-            {
                 return NotFound();
-            }
+         
             var view = _mapper.Map<CourseDTO>(course);
+
             return View(view);
         }
 
@@ -77,15 +68,13 @@ namespace University.Controllers
         {
           
             var success = _courseService.RemoveCourseBy(id);
-            if (success == true)
-            {
-                return RedirectToAction("Done", "Main");
-            }
+          
+            if (success)
+               return RedirectToAction("Done", "Main");
+           
             else
-            {
-                return RedirectToAction("Fail", "Main");
-            }
-                
+               return RedirectToAction("Fail", "Main");
+             
         }
 
     }

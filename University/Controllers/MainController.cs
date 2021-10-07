@@ -40,9 +40,9 @@ namespace University.Controllers
         [HttpPost]
         public IActionResult AddCourses(CourseDTO courseDTO)
         {
-            var course = _mapper.Map<Course>(courseDTO);
-            var success = _course.AddCourse(course);
-            if (success == true)
+            
+            var success = _course.AddCourse(courseDTO);
+            if (success)
             {
                 return RedirectToAction("Done");
             }
@@ -65,11 +65,11 @@ namespace University.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddGroups(Group group)
+        public IActionResult AddGroups(GroupDTO groupDTO)
         {
 
-            var success = _group.AddGroup(group);
-            if (success == true)
+            var success = _group.AddGroup(groupDTO);
+            if (success)
             {
                 return RedirectToAction("Done");
             }
@@ -83,11 +83,11 @@ namespace University.Controllers
             return View();
         }
 
-        public IActionResult AddStudents(Student student)
+        public IActionResult AddStudents(StudentDTO studentDTO)
         {
 
-            var success = _student.AddStudent(student);
-            if (success == true)
+            var success = _student.AddStudent(studentDTO);
+            if (success)
             {
                 return RedirectToAction("Done");
             }

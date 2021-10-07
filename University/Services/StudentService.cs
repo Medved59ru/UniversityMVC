@@ -1,79 +1,79 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using University.Models;
+using University.ViewModels;
 
 namespace University.Serviñes
 {
     public class StudentService
     {
-        private readonly UniversityContext context;
+        private readonly UniversityContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentService(UniversityContext context)
+        public StudentService(UniversityContext context, IMapper mapper)
         {
-            this.context = context;
+            _context = context;
+            _mapper = mapper;
+
         }
 
-        protected internal bool AddStudent(Student student)
+        protected internal bool AddStudent(StudentDTO studentDTO)
         {
             bool success = false;
+
+            var student = _mapper.Map<Student>(studentDTO);
+
             if (student.Id == default)
             {
-                context.Entry(student).State = EntityState.Added;
+                _context.Entry(student).State = EntityState.Added;
+                _context.SaveChanges();
                 success = true;
             }
-
-            else
-            {
-                context.Entry(student).State = EntityState.Modified;
-                success = true;
-            }
-
-            context.SaveChanges();
 
             return success;
 
         }
 
-        protected internal bool EditStudent(Student student)
+        protected internal bool EditStudent(StudentDTO studentDTO)
         {
             bool success = false;
+
+            var student = _mapper.Map<Student>(studentDTO);
+
             if (student.Id != default)
             {
-                context.Entry(student).State = EntityState.Modified;
+                _context.Entry(student).State = EntityState.Modified;
+                _context.SaveChanges();
                 success = true;
             }
-
-            context.SaveChanges();
-
+            
             return success;
         }
 
-        protected internal Student GetOneStudentBy(int? id)
+        protected internal Student GetOneStudentOrDefaultBy(int? id)
         {
-            Student student = new Student();
-            student = context.Students.Include(s => s.Group).FirstOrDefault(m => m.Id == id);
-            return student;
+            if (id == null)
+            {
+                return null;
+            }
+            return _context.Students.Include(s => s.Group).FirstOrDefault(m => m.Id == id);
         }
-
+                
         protected internal Student GetOneStudentForDeleteBy(int? id)
-        {
-            Student student = new Student();
-            student = context.Students.Include(s => s.Group).FirstOrDefault(m => m.Id == id);
-            return student;
-        }
-
+                => _context.Students.Include(s => s.Group).FirstOrDefault(m => m.Id == id);
+           
         protected internal IQueryable<Student> GetStudentsByGroup(int? id)
-        {
-            return context.Students.Include(s => s.Group).Where(g => g.GroupId == id);
-        }
-
+                =>_context.Students.Include(s => s.Group).Where(g => g.GroupId == id);
+      
         protected internal bool RemoveStudentBy(int id)
         {
             bool succces = false;
+
             try
             {
-                context.Students.Remove(new Student() { Id = id });
-                context.SaveChanges();
+                _context.Students.Remove(new Student() { Id = id });
+                _context.SaveChanges();
                 succces = true;
             }
             catch

@@ -18,8 +18,6 @@ namespace University.ViewModels
     
         public CourseDTO Course { get; set; }
 
-        public string SelectedItemId { get; set; }
-
-        public IEnumerable<SelectListItem> Items { get; set; }
+        
     }
 }

@@ -2,64 +2,82 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using University.Models;
+using University.ViewModels;
+using AutoMapper;
 
 namespace University.Serviñes
 {
     public class GroupService
     {
-        private readonly UniversityContext context;
+        private readonly UniversityContext _context;
+        private readonly IMapper _mapper;
 
-        public GroupService(UniversityContext context)
+        public GroupService(UniversityContext context, IMapper mapper)
         {
-            this.context = context;
+            _context = context;
+            _mapper = mapper;
         }
 
-        protected internal bool AddGroup(Group group)
+        protected internal bool AddGroup(GroupDTO groupDTO)
         {
-            bool success = false;
-            if (group.Id == default)
+            bool success;
+
+            var group = _mapper.Map<Group>(groupDTO);
+
+            try
             {
-                context.Add(group);
+                _context.Add(group);
+                _context.SaveChanges();
                 success = true;
             }
-
-            context.SaveChanges();
-
+            catch
+            {
+                success = false;
+            }
             return success;
         }
 
-        protected internal bool EditGroup(Group group)
+        protected internal bool EditGroup(GroupDTO groupDTO)
         {
             bool success = false;
+
+            var group = _mapper.Map<Group>(groupDTO);
+
             if (group.Id != default)
             {
-                context.Update(group);
+                _context.Update(group);
+                _context.SaveChanges();
                 success = true;
             }
-
-            context.SaveChanges();
 
             return success;
         }
 
         protected internal SelectList GetGroupsForDropDownMemu(string id = "Id", string name = "Name")
-            => new SelectList(context.Groups, id, name);
+                => new SelectList(_context.Groups, id, name);
 
-        protected internal SelectList GetListOfGroupsForDropDownMenu(string id, string name, Student student)
-             => new SelectList(context.Groups, id, name, student.Group);
-       
-        protected internal Group GetOneGroupBy(int? id)
+        protected internal SelectList GetListOfGroupsForDropDownMenu(Student student, string id = "Id", string name = "Name")
+                => new SelectList(_context.Groups, id, name, student.Group);
+
+        protected internal Group GetOneGroupOrDefualtBy(int? id)
         {
-            Group group = new Group();
-            group = context.Groups.Include(g => g.Course).FirstOrDefault(g => g.Id == id);
-            return group;
-        }
+            if (id == null)
+            {
+                return null;
+            }
+            return _context.Groups.Include(g => g.Course).FirstOrDefault(g => g.Id == id);
 
-        protected internal IQueryable<Group> GetGroupsBy(int? id)
+        }
+            
+        protected internal IQueryable<Group> GetGroupsOrDefualtBy(int? id)
         {
-            return context.Groups.Include(g => g.Course).Where(c => c.CourseId == id);
+            if (id == null)
+            {
+                return null;
+            }
+            return _context.Groups.Include(g => g.Course).Where(c => c.CourseId == id);
         }
-
+                
         protected internal bool RemoveGrourBy(int id)
         {
             bool succces = false;
@@ -69,18 +87,17 @@ namespace University.Serviñes
             }
             else
             {
-                context.Groups.Remove(new Group() { Id = id });
-                context.SaveChanges();
+                _context.Groups.Remove(new Group() { Id = id });
+                _context.SaveChanges();
                 succces = true;
             }
-
             return succces;
         }
 
         private bool StudentsExist(int id)
         {
             bool result = true;
-            if (context.Students.Where(g => g.GroupId == id).Count() == 0)
+            if (_context.Students.Where(g => g.GroupId == id).Count() == 0)
             {
                 result = false;
             }

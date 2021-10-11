@@ -4,6 +4,9 @@ using System.Linq;
 using University.Models;
 using University.ViewModels;
 using AutoMapper;
+using System;
+using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace University.Serviñes
 {
@@ -18,24 +21,39 @@ namespace University.Serviñes
             _mapper = mapper;
         }
 
-        protected internal bool AddCourse(CourseDTO courseDTO)
+        protected internal bool CreateCourse(string nameOfCourse)
         {
-            bool success;
-
-            var course = _mapper.Map<Course>(courseDTO);
+            if (string.IsNullOrWhiteSpace(nameOfCourse))
+                throw new ArgumentException("Value can not be null or whitespace!", nameof(nameOfCourse));
           
-            _context.Add(course);
-            _context.SaveChanges();
-            success = true;
-   
+            bool success;
+            var course = new Course();
+            course.Name = nameOfCourse;
+
+            try
+            {
+                _context.Add(course);
+                _context.SaveChanges();
+                success = true;
+            }
+            catch
+            {
+                success = false;
+            }
             return success;
         }
 
-        protected internal bool EditCourse(CourseDTO courseDTO)
+        protected internal bool EditCourse(int id, string name)
         {
-            bool success;
 
-            var course = _mapper.Map<Course>(courseDTO);
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Value can not be null or whitespace!", nameof(name));
+
+            bool success;
+                
+            var course = (Course)_context.Courses.FirstOrDefault(c => c.Id == id);
+            course.Name = name;
+
             try
             {
                 _context.Update(course);
@@ -51,30 +69,35 @@ namespace University.Serviñes
         }
 
        
-        protected internal List<Course> GetListOfCourses()
-                 =>_context.Courses.ToList();
+        protected internal List<CourseDto> GetListOfCourses()
+        {
+            var view = _mapper.Map<IEnumerable<Course>, List<CourseDto>>(_context.Courses.ToList());
+            return view;
+        }
+              
         
 
         protected internal SelectList GetListOfCourseForDropDownMenu(string id = "Id", string name = "Name")
-                 => new SelectList(_context.Courses, id, name);
+        {
+            return new SelectList(_context.Courses, id, name) ;
+        }
+                
       
 
         protected internal SelectList GetListOfCourseForDropDownMenu(Group group, string id = "Id", string name = "Name")
                  =>new SelectList(_context.Courses, id, name, group.Course);
-       
 
-        protected internal Course GetOneCourseOrDefaultBy(int? id)
+
+        protected internal CourseDto GetOneCourseOrDefaultBy(int? id)
         {
-            if (id == null)
-            {
-                return null;
-            }
-            return _context.Courses.Find(id);
+           var course = _context.Courses.Find(id);
+           CourseDto view = _mapper.Map<CourseDto>(course);
+           return view;
         }
 
         protected internal bool RemoveCourseBy(int id)
         {
-            bool success = false;
+            bool success;
             try
             {
                 var course = _context.Courses.Find(id);

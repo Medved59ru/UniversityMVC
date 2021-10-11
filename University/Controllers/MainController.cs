@@ -13,22 +13,22 @@ namespace University.Controllers
     public class MainController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly CourseService _course;
+        private readonly CourseService _courseService;
         private readonly GroupService _group;
         private readonly StudentService _student;
 
-        public MainController(CourseService course, GroupService group, StudentService student, IMapper mapper)
+        public MainController(CourseService courseService, GroupService group, StudentService student, IMapper mapper)
         {
             _mapper = mapper;
-            _course = course;
+            _courseService = courseService;
             _group = group;
             _student = student;
         }
 
         public IActionResult Index()
         {
-            var courses = _mapper.Map<IEnumerable<Course>, List<CourseDTO>>(_course.GetListOfCourses());
-            return View(courses);
+            var view = _courseService.GetListOfCourses();
+            return View(view);
         }
 
         [HttpGet]
@@ -38,10 +38,10 @@ namespace University.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourses(CourseDTO courseDTO)
+        public IActionResult AddCourses(CourseDto courseDto)
         {
             
-            var success = _course.AddCourse(courseDTO);
+            var success = _courseService.CreateCourse(courseDto.Name);
             if (success)
             {
                 return RedirectToAction("Done");
@@ -57,18 +57,18 @@ namespace University.Controllers
         [HttpGet]
         public IActionResult AddGroups()
         {
-            var list = _course.GetListOfCourses();
-                 
-            ViewBag.Courses = _course.GetListOfCourseForDropDownMenu();
+            var list = _courseService.GetListOfCourses();
+
+            ViewBag.Courses = _courseService.GetListOfCourseForDropDownMenu();
 
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddGroups(GroupDTO groupDTO)
+        public IActionResult AddGroups(GroupDto groupDto)
         {
 
-            var success = _group.AddGroup(groupDTO);
+            var success = _group.AddGroup(groupDto);
             if (success)
             {
                 return RedirectToAction("Done");
@@ -83,7 +83,7 @@ namespace University.Controllers
             return View();
         }
 
-        public IActionResult AddStudents(StudentDTO studentDTO)
+        public IActionResult AddStudents(StudentDto studentDTO)
         {
 
             var success = _student.AddStudent(studentDTO);

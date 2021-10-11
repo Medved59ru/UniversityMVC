@@ -18,7 +18,7 @@ namespace University.Serviñes
 
         }
 
-        protected internal bool AddStudent(StudentDTO studentDTO)
+        protected internal bool AddStudent(StudentDto studentDTO)
         {
             bool success = false;
 
@@ -35,7 +35,7 @@ namespace University.Serviñes
 
         }
 
-        protected internal bool EditStudent(StudentDTO studentDTO)
+        protected internal bool EditStudent(StudentDto studentDTO)
         {
             bool success = false;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace University.ViewModels
 {
-    public class GroupDTO
+    public class GroupDto
     {
         public int Id { get; set; }
     
@@ -16,7 +16,7 @@ namespace University.ViewModels
 
         public int CourseId { get; set; }
     
-        public CourseDTO Course { get; set; }
+        public CourseDto Course { get; set; }
 
         
     }

@@ -13,9 +13,9 @@ namespace University.Profiles
     {
         public ApplicationProfile()
         {
-            CreateMap<Course, CourseDTO>().ReverseMap();
-            CreateMap<Group, GroupDTO>().ReverseMap();
-            CreateMap<Student, StudentDTO>().ReverseMap();
+            CreateMap<Course, CourseDto>().ReverseMap();
+            CreateMap<Group, GroupDto>().ReverseMap();
+            CreateMap<Student, StudentDto>().ReverseMap();
            
         }
     }

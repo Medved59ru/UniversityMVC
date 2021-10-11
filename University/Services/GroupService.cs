@@ -18,11 +18,11 @@ namespace University.Serviñes
             _mapper = mapper;
         }
 
-        protected internal bool AddGroup(GroupDTO groupDTO)
+        protected internal bool AddGroup(GroupDto groupDto)
         {
             bool success;
 
-            var group = _mapper.Map<Group>(groupDTO);
+            var group = _mapper.Map<Group>(groupDto);
 
             try
             {
@@ -37,7 +37,7 @@ namespace University.Serviñes
             return success;
         }
 
-        protected internal bool EditGroup(GroupDTO groupDTO)
+        protected internal bool EditGroup(GroupDto groupDTO)
         {
             bool success = false;
 

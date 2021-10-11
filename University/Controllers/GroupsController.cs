@@ -25,7 +25,7 @@ namespace University.Controllers
         {
             
             var list = _groupService.GetGroupsOrDefualtBy(id).ToList();
-            var view = _mapper.Map<List<Group>, List<GroupDTO>>(list);
+            var view = _mapper.Map<List<Group>, List<GroupDto>>(list);
 
             return View(view);
         }
@@ -41,14 +41,14 @@ namespace University.Controllers
 
             ViewData["CourseId"] = _courseService.GetListOfCourseForDropDownMenu(group,"Id", "Name");
 
-            var view = _mapper.Map<GroupDTO>(group);
+            var view = _mapper.Map<GroupDto>(group);
 
             return View(view);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,CourseId")] GroupDTO groupDTO)
+        public IActionResult Edit(int id, [Bind("Id,Name,CourseId")] GroupDto groupDTO)
         {
             if (id != groupDTO.Id)
             {
@@ -74,7 +74,7 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var view = _mapper.Map<GroupDTO>(group);
+            var view = _mapper.Map<GroupDto>(group);
 
             return View(view);
         }

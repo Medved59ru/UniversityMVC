@@ -5,8 +5,6 @@ using University.Models;
 using University.ViewModels;
 using AutoMapper;
 using System;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
 
 namespace University.Serviñes
 {
@@ -17,18 +15,18 @@ namespace University.Serviñes
 
         public CourseService(UniversityContext context, IMapper mapper)
         {
-           _context = context;
+            _context = context;
             _mapper = mapper;
         }
 
-        protected internal bool CreateCourse(string nameOfCourse)
+        protected internal bool CreateCourse(CourseDto courseDto)
         {
-            if (string.IsNullOrWhiteSpace(nameOfCourse))
-                throw new ArgumentException("Value can not be null or whitespace!", nameof(nameOfCourse));
-          
+            if (string.IsNullOrWhiteSpace(courseDto.Name))
+                throw new ArgumentException("Value can not be null or whitespace!", nameof(courseDto.Name));
+
             bool success;
             var course = new Course();
-            course.Name = nameOfCourse;
+            course.Name = courseDto.Name;
 
             try
             {
@@ -43,16 +41,20 @@ namespace University.Serviñes
             return success;
         }
 
-        protected internal bool EditCourse(int id, string name)
+        protected internal bool EditCourse(CourseDto courseDto)
         {
 
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Value can not be null or whitespace!", nameof(name));
+            if (string.IsNullOrWhiteSpace(courseDto.Name))
+                throw new ArgumentException("Value can not be null or whitespace!", nameof(courseDto.Name));
 
-            bool success;
-                
-            var course = (Course)_context.Courses.FirstOrDefault(c => c.Id == id);
-            course.Name = name;
+            bool success = false;
+
+            var course = _context.Courses.FirstOrDefault(c => c.Id == courseDto.Id);
+
+            if (course == null)
+                return success;
+
+             course.Name = courseDto.Name;
 
             try
             {
@@ -64,35 +66,35 @@ namespace University.Serviñes
             {
                 success = false;
             }
-             
+
             return success;
         }
 
-       
+
         protected internal List<CourseDto> GetListOfCourses()
         {
             var view = _mapper.Map<IEnumerable<Course>, List<CourseDto>>(_context.Courses.ToList());
             return view;
         }
-              
-        
+
+
 
         protected internal SelectList GetListOfCourseForDropDownMenu(string id = "Id", string name = "Name")
         {
-            return new SelectList(_context.Courses, id, name) ;
+            return new SelectList(_context.Courses, id, name);
         }
-                
-      
+
+
 
         protected internal SelectList GetListOfCourseForDropDownMenu(Group group, string id = "Id", string name = "Name")
-                 =>new SelectList(_context.Courses, id, name, group.Course);
+                 => new SelectList(_context.Courses, id, name, group.Course);
 
 
         protected internal CourseDto GetOneCourseOrDefaultBy(int? id)
         {
-           var course = _context.Courses.Find(id);
-           CourseDto view = _mapper.Map<CourseDto>(course);
-           return view;
+            var course = _context.Courses.Find(id);
+            CourseDto view = _mapper.Map<CourseDto>(course);
+            return view;
         }
 
         protected internal bool RemoveCourseBy(int id)

@@ -40,8 +40,7 @@ namespace University.Controllers
         [HttpPost]
         public IActionResult AddCourses(CourseDto courseDto)
         {
-            
-            var success = _courseService.CreateCourse(courseDto.Name);
+            var success = _courseService.CreateCourse(courseDto);
             if (success)
             {
                 return RedirectToAction("Done");

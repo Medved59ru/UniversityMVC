@@ -29,7 +29,7 @@ namespace University.Controllers
         {
             if (id != courseDto.Id) return NotFound();
 
-            bool success = _courseService.EditCourse(courseDto.Id, courseDto.Name);
+            bool success = _courseService.EditCourse(courseDto);
 
             if (success)
                 return RedirectToAction("Done", "Main");

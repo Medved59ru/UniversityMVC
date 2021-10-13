@@ -4,7 +4,7 @@ using System.Linq;
 using University.Models;
 using University.ViewModels;
 
-namespace University.Serviñes
+namespace University.Services
 {
     public class StudentService
     {

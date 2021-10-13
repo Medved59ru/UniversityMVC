@@ -5,7 +5,7 @@ using University.Models;
 using University.ViewModels;
 using AutoMapper;
 
-namespace University.Serviñes
+namespace University.Services
 {
     public class GroupService
     {

@@ -5,8 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using University.Models;
 using Microsoft.EntityFrameworkCore;
-using University.Serviñes;
-using University.Profiles;
+using University.Services;
 
 namespace University
 {

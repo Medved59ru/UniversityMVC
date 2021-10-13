@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using University.Models;
-using University.Serviсes;
+using University.Services;
 using AutoMapper;
 using System.Collections.Generic;
 using University.ViewModels;

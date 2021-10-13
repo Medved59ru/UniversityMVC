@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using University.Models;
-using University.Serviсes;
+using University.Services;
 using AutoMapper;
 using University.ViewModels;
-using System.Collections.Generic;
 
 namespace University.Controllers
 {

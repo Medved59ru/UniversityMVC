@@ -1,6 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using University.Serviсes;
+﻿using Microsoft.AspNetCore.Mvc;
+using University.Services;
 using University.ViewModels;
 
 namespace University.Controllers

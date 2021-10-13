@@ -6,7 +6,7 @@ using University.ViewModels;
 using AutoMapper;
 using System;
 
-namespace University.Serviñes
+namespace University.Services
 {
     public class CourseService
     {
